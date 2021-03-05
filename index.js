@@ -1,0 +1,43 @@
+require("dotenv").config();
+const express = require("express");
+const mongoose = require("mongoose");
+const morgan = require("morgan");
+const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
+const cors = require('cors')
+const expressValidator = require("express-validator");
+//import routes
+const authRoutes = require("./routes/auth.js");
+const userRoutes = require("./routes/user.js");
+const categoryRoutes = require("./routes/category.js");
+const productRoutes = require("./routes/product.js");
+const braintreeRoutes = require("./routes/braintree.js");
+const orderRoutes = require("./routes/order.js");
+
+//app
+const app = express();
+
+//Database Connections 
+mongoose.connect(process.env.MONGO_URI,{ useNewUrlParser: true, useUnifiedTopology: true,useCreateIndex:true});
+
+//middlewares
+app.use(morgan('dev'));
+app.use(bodyParser.json());
+app.use(cookieParser());
+app.use(expressValidator());
+app.use(cors());
+
+//routes middleware
+app.use("/api",authRoutes);
+app.use("/api",userRoutes);
+app.use("/api",categoryRoutes);
+app.use("/api",productRoutes); 
+app.use("/api",braintreeRoutes); 
+app.use("/api",orderRoutes); 
+
+app.listen(process.env.PORT,()=>{
+    console.log(`Server is listening on Port ${process.env.PORT}`);
+})
+
+//Error in running Express-validator^6.6.1, instead use  @5.5...
+//https://stackoverflow.com/questions/56733975/express-validator-error-expressvalidator-is-not-a-function
